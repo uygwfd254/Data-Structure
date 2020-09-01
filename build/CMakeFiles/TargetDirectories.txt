@@ -1,3 +1,0 @@
-/home/y41/Temp/data_structure/build/CMakeFiles/rebuild_cache.dir
-/home/y41/Temp/data_structure/build/CMakeFiles/binary.dir
-/home/y41/Temp/data_structure/build/CMakeFiles/edit_cache.dir
