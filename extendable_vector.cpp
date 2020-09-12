@@ -19,7 +19,7 @@ class ExtendableArray {
 				typedef iterator type;
 				typedef T* pointer;
 
-				iterator(pointer ptr) : ptr_(ptr) { /*cout << ptr << endl;*/ }
+				iterator(pointer ptr) : ptr_(ptr) { }
 				type operator++() { ptr_++; return *this; }
 				type operator++(int) { type i = ptr_; ptr_++; return i; }
 				type operator--() { ptr_--; return ptr_; }
