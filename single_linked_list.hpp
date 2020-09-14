@@ -1,8 +1,8 @@
-#include<iostream>
-#include<iterator>
-#include<stdexcept>
+#pragma once
 
-#include<utility>
+#include <iostream>
+#include <iterator>
+#include <stdexcept>
 
 using namespace std;
 
@@ -183,7 +183,3 @@ class SinglyLinkedList {
 		}
 
 };
-
-int main(int argc, const char* argv[]) {
-	return 0;
-}

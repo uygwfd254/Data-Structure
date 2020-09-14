@@ -1,6 +1,8 @@
-#include<iostream>
-#include<iterator>
-#include<stdexcept>
+#pragma once
+
+#include <iostream>
+#include <iterator>
+#include <stdexcept>
 
 using namespace std;
 
@@ -134,7 +136,3 @@ class ExtendableArray {
 			array_ = new T[capacity_];
 		}
 };
-
-int main(int argc, const char* argv[]) {
-	return 0;
-}
