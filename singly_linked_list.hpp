@@ -1,3 +1,7 @@
+//
+// singly linked lists with dummy nodes as head
+//
+
 #pragma once
 
 #include <iostream>
@@ -59,10 +63,24 @@ class SinglyLinkedList {
 		iterator begin() { return iterator(head->next); }
 		iterator end() { return iterator(tail->next); }
 
+
 		SinglyLinkedList() : head(new Node<T>(T(), nullptr)), tail(nullptr) { }
 		~SinglyLinkedList() { clear(); }
 		SinglyLinkedList(const SinglyLinkedList& rhs) : SinglyLinkedList() {
+			auto it = before_begin();
+			for (Node<T>* curr = rhs.head->next; curr; curr = curr->next)
+				it = insert_after(it, curr->data);
+		}
+		SinglyLinkedList& operator=(const SinglyLinkedList& rhs) {
+			if (this != &rhs) {
+				clear();
 
+				head = new Node<T>(T(), nullptr);
+				auto it = before_begin();
+				for (Node<T>* curr = rhs.head->next; curr; curr = curr->next)
+					it = insert_after(it, curr->data);
+			}
+			return *this;
 		}
 
 		bool empty() { return head->next == nullptr; }
@@ -181,5 +199,4 @@ class SinglyLinkedList {
 			delete head;
 			head = new Node<T>(T(), prev);
 		}
-
 };

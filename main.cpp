@@ -1,19 +1,24 @@
 #include "extendable_vector.hpp"
-#include "single_linked_list.hpp"
+//#include "singly_linked_list.hpp"
+#include "doubly_linked_list.hpp"
 
 #include <iostream>
 
 using namespace std;
 
 int main(int argc, const char* argv[]) {
-	ExtendableArray<int> v;
+	DoublyLinkedList<int> l;
+	l.push_back(1);
+	l.push_back(2);
+	l.push_back(3);
+	l.push_back(4);
+	l.push_back(5);
+	l.pop_front();
+	l.pop_back();
+	l.pop_back();
 
-	for (int i = 0; i < 10; i++)
-		v.push_back(i);
+	for (auto elem : l)
+		cout << elem;
 
-	for (auto x : v)
-		cout << x << ",";
-
-	cout << endl;
 	return 0;
 }
