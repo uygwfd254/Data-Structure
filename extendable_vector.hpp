@@ -55,8 +55,8 @@ class ExtendableArray {
 			size_ = input.size_;
 			capacity_ = input.capacity_;
 			array_ = new T[capacity_];
-			for (auto& elem : input.array_)
-				array_->push_back(elem);
+			for (int i = 0; i < size_; ++i)
+				array_[i] = input.array_[i];
 		}
 		ExtendableArray& operator=(const ExtendableArray& rhs) {
 			if (this != &rhs) {
@@ -64,8 +64,8 @@ class ExtendableArray {
 				size_ = rhs.size_;
 				capacity_ = rhs.capacity_;
 				array_ = new T[capacity_];
-				for (auto& elem : rhs.array_)
-					array_->push_back(elem);
+				for (int i = 0; i < size_; ++i)
+					array_[i] = rhs.array_[i];
 			}
 			return *this;
 		}
@@ -101,15 +101,13 @@ class ExtendableArray {
 			array_[size_++] = value;
 		}
 		void pop_back() {
-			if (empty()) {
-				T new_value = new T;
-				array_[--size_] = *new_value;
-				delete new_value;
+			if (!empty()) {
+				array_[--size_] = T();
 			}
 		}
 		void set(size_t index, const T& value) { at(index) = value; }
 		void insert(iterator index_it, const T& value) {
-			if (end() <= index_it)
+			if (end() < index_it)
 				throw out_of_range("index out of range");
 
 			if (size_ >= capacity_)

@@ -6,7 +6,6 @@
 
 #include <iostream>
 #include <iterator>
-#include <stdexcept>
 
 using namespace std;
 
@@ -96,34 +95,40 @@ class DoublyLinkedList {
 		void push_front(const T& data) {
 			head->next = new Node<T>(data, head->next, head);
 			head->next->next->prev = head->next;
-			size_++;
+			++size_;
+
+			// insert(begin(), data);
 		}
 		void pop_front() {
 			Node<T>* temp = head->next;
 			head->next = head->next->next;
 			head->next->prev = head;
-			size_--;
+			--size_;
 
 			delete temp;
+			// erase(begin());
 		}
 		void push_back(const T& data) {
 			tail->prev = new Node<T>(data, tail, tail->prev);
 			tail->prev->prev->next = tail->prev;
-			size_++;
+			++size_;
+
+			// insert(end(), data);
 		}
 		void pop_back() {
 			Node<T>* temp = tail->prev;
 			tail->prev = tail->prev->prev;
 			tail->prev->next = tail;
-			size_--;
+			--size_;
 
 			delete temp;
+			// erase(--end());
 		}
 		iterator insert(iterator it, const T& data) {
 			Node<T>* curr = it.ptr_;
 			curr->prev->next = new Node<T>(data, curr, curr->prev);
 			curr->prev = curr->prev->next;
-			size_++;
+			++size_;
 
 			return iterator(curr->prev);
 		}
@@ -131,7 +136,7 @@ class DoublyLinkedList {
 			Node<T>* curr = it.ptr_, *next = curr->next;
 			curr->next->prev = curr->prev;
 			curr->prev->next = curr->next;
-			size_--;
+			--size_;
 
 			delete curr;
 			return next;

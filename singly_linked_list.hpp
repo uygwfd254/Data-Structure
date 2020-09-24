@@ -6,7 +6,6 @@
 
 #include <iostream>
 #include <iterator>
-#include <stdexcept>
 
 using namespace std;
 

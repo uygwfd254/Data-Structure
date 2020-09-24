@@ -1,36 +1,36 @@
-//#include "extendable_vector.hpp"
+#include "extendable_vector.hpp"
 //#include "singly_linked_list.hpp"
-#include "doubly_linked_list.hpp"
+//#include "doubly_linked_list.hpp"
+//#include "stack.hpp"
+#include "queue.hpp"
 
 #include <iostream>
 
 using namespace std;
 
 int main(int argc, const char* argv[]) {
-	DoublyLinkedList<int> l;
-	l.push_back(1);
-	l.push_back(2);
-	l.push_back(3);
-	l.push_back(4);
-	l.push_back(5);
+	// QueueExtendableArray<int> q;
 
-	DoublyLinkedList<int> l2;
-	l2.push_back(6);
-	l2.push_back(7);
-	l2.push_back(8);
-	l2.push_back(9);
-	l2.push_back(10);
-	l2.push_back(11);
-	l2.push_back(12);
+	// q.push(1);
+	// q.push(2);
+	// q.push(3);
+	// q.push(4);
+	// q.push(5);
 
-	l2 = l;
+	// while(!q.empty()) {
+	// 	cout << q.front() << " ";
+	// 	q.pop();
+	// }
 
-	l2.push_back(20);
-	l2.reverse();
-	l2.push_back(10);
+	ExtendableArray<int> v;
+	v.insert(v.begin(), 1);
+	v.insert(v.begin(), 2);
+	// v.insert(v.begin(), 3);
+	// v.insert(v.begin(), 4);
 
-	for (auto elem : l2)
-		cout << elem << " ";
+	for (auto e : v)
+		cout << e << " ";
+
 
 	return 0;
 }
