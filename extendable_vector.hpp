@@ -110,9 +110,8 @@ class ExtendableArray {
 			if (end() < index_it)
 				throw out_of_range("index out of range");
 
-			int steps = 0;
 			if (size_ >= capacity_) {
-				steps = index_it.ptr_ - begin().ptr_;
+				int steps = index_it.ptr_ - begin().ptr_;
 				reserve(2 * capacity_);
 				index_it = begin() + steps;
 			}
