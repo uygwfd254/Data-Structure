@@ -51,11 +51,11 @@ class QueueExtendableArray {
 
 		// push and pop is opposite direction
 		void push(const T& val) {
-			array.insert(array.begin(), val);
+			array.push_back(val);
 			++size_;
 		}
 		void pop() {
-			array.pop_back();
+			array.erase(array.begin());
 			--size_;
 		}
 
@@ -64,4 +64,9 @@ class QueueExtendableArray {
 
 		bool empty() { return array.empty(); }
 		size_t size() { return size_; }
+
+		void print() {
+			for (auto elem : array)
+				cout << elem << " ";
+		}
 };

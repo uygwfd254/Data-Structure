@@ -40,7 +40,7 @@ class ExtendableArray {
 					out << data;
 					return out;
 				}
-
+				friend class ExtendableArray;
 			private:
 				pointer ptr_;
 		};
@@ -110,8 +110,12 @@ class ExtendableArray {
 			if (end() < index_it)
 				throw out_of_range("index out of range");
 
-			if (size_ >= capacity_)
+			int steps = 0;
+			if (size_ >= capacity_) {
+				steps = index_it.ptr_ - begin().ptr_;
 				reserve(2 * capacity_);
+				index_it = begin() + steps;
+			}
 
 			for (iterator it = end(); index_it != it; it--)
 				*it = *(it - 1);
