@@ -24,6 +24,18 @@ struct Node{
 template<typename T>
 class DoublyLinkedList {
 	private:
+		template<typename Type>
+		struct Node{
+			Type data;
+			Node<Type>* next;
+			Node<Type>* prev;
+
+			Node() = delete;
+			Node(const Type& data) : Node(data, nullptr, nullptr) { }
+			Node(const Type& data, Node<Type>* next, Node<Type>* prev) :
+				data(data), next(next), prev(prev) { }
+		};
+
 		Node<T>* head;
 		Node<T>* tail;
 		size_t size_;

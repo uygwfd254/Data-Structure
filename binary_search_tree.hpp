@@ -11,29 +11,30 @@
 using namespace std;
 
 template<typename K, typename V>
-struct Node {
-	K key;
-	V val;
-
-	Node<K,V>* left;
-	Node<K,V>* right;
-	Node<K,V>* parent;
-
-	Node() = delete;
-	Node(const K& key, const V& val, Node<K,V>* parent,
-		Node<K,V>* left = nullptr, Node<K,V>* right = nullptr) :
-		key(key), val(val), parent(parent), left(left), right(right) { }
-
-
-	void set(Node<K,V>* data) {
-		this->key = data->key;
-		this->val = data->val;
-	}
-};
-
-template<typename K, typename V>
 class BinarySearchTree {
 	private:
+		// node class
+		template<typename Key, typename Val>
+		struct Node {
+			Key key;
+			Val val;
+
+			Node<Key,Val>* left;
+			Node<Key,Val>* right;
+			Node<Key,Val>* parent;
+
+			Node() = delete;
+			Node(const Key& key, const Val& val, Node<Key,Val>* parent,
+				Node<Key,Val>* left = nullptr, Node<Key,Val>* right = nullptr) :
+				key(key), val(val), parent(parent), left(left), right(right) { }
+
+
+			void set(Node<Key,Val>* data) {
+				this->key = data->key;
+				this->val = data->val;
+			}
+		};
+
 		Node<K,V>* root;
 
 		Node<K,V>* search_helper(Node<K,V>* curr, const K& key) {

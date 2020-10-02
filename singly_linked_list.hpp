@@ -9,20 +9,21 @@
 
 using namespace std;
 
-template<typename T>
-struct Node{
-	T data;
-	Node<T>* next;
-
-	Node() = delete;
-	Node(const T& data) : Node(data, nullptr) { }
-	Node(const T& data, Node<T>* next) :
-		data(data), next(next) { }
-};
 
 template<typename T>
 class SinglyLinkedList {
 	private:
+		template<typename Type>
+		struct Node{
+			Type data;
+			Node<Type>* next;
+
+			Node() = delete;
+			Node(const Type& data) : Node(data, nullptr) { }
+			Node(const Type& data, Node<Type>* next) :
+				data(data), next(next) { }
+		};
+		
 		Node<T>* head;
 		Node<T>* tail;
 
