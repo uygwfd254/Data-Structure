@@ -212,6 +212,9 @@ class BinarySearchTree {
 		int height() {
 			return height_helper(root);
 		}
+		bool empty() {
+			return root;
+		}
 
 		void clear() {
 			clear_helper(root);

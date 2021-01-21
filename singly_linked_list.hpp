@@ -131,21 +131,21 @@ class SinglyLinkedList {
 		// 	tail = tail->next;
 		// }
 		iterator insert_after(iterator it, const T& data) {
-			Node<T>* temp = it.ptr_->next;
-			it.ptr_->next = new Node<T>(data, temp);
+			Node<T>* temp = it.node()->next;
+			it.node()->next = new Node<T>(data, temp);
 
 			if (!temp)
-				tail = it.ptr_->next;
-			return it.ptr_->next;
+				tail = it.node()->next;
+			return it.node()->next;
 		}
 		iterator erase_after(iterator it) {
-			Node<T>* temp = it.ptr_->next;
-			it.ptr_->next = it.ptr_->next->next;
+			Node<T>* temp = it.node()->next;
+			it.node()->next = it.node()->next->next;
 			delete temp;
 
-			if (!it.ptr_->next)
-				tail = it.ptr_;
-			return it.ptr_->next;
+			if (!it.node()->next)
+				tail = it.node();
+			return it.node()->next;
 		}
 		void clear() {
 			while(!empty())

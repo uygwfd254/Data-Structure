@@ -10,18 +10,6 @@
 using namespace std;
 
 template<typename T>
-struct Node{
-	T data;
-	Node<T>* next;
-	Node<T>* prev;
-
-	Node() = delete;
-	Node(const T& data) : Node(data, nullptr, nullptr) { }
-	Node(const T& data, Node<T>* next, Node<T>* prev) :
-		data(data), next(next), prev(prev) { }
-};
-
-template<typename T>
 class DoublyLinkedList {
 	private:
 		template<typename Type>
@@ -59,8 +47,6 @@ class DoublyLinkedList {
 				bool operator==(const type& rhs) { return ptr_ == rhs.ptr_; }
 				bool operator!=(const type& rhs) { return ptr_ != rhs.ptr_; }
 				bool operator!() { return ptr_ != nullptr; }
-
-				friend class DoublyLinkedList;
 
 			protected:
 				pointer ptr_;
@@ -137,7 +123,7 @@ class DoublyLinkedList {
 			// erase(--end());
 		}
 		iterator insert(iterator it, const T& data) {
-			Node<T>* curr = it.ptr_;
+			Node<T>* curr = it.node();
 			curr->prev->next = new Node<T>(data, curr, curr->prev);
 			curr->prev = curr->prev->next;
 			++size_;
@@ -145,7 +131,7 @@ class DoublyLinkedList {
 			return iterator(curr->prev);
 		}
 		iterator erase(iterator it) {
-			Node<T>* curr = it.ptr_, *next = curr->next;
+			Node<T>* curr = it.node(), *next = curr->next;
 			curr->next->prev = curr->prev;
 			curr->prev->next = curr->next;
 			--size_;
