@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stack.hpp"
+#include "pair.hpp"
 
 #include <iostream>
 #include <iterator>
@@ -15,16 +16,19 @@ class AVLTree {
 		// node class
 		template<typename Key, typename Val>
 		struct Node {
-			Key key;
-			Val val;
-
+			Pair<Key, Val> data;
 			Node<Key,Val>* left;
 			Node<Key,Val>* right;
 
 			Node() = delete;
-			Node(const Key& key, const Val& val,
+			Node(Pair<Key, Val> pair,
 				Node<Key,Val>* left = nullptr, Node<Key,Val>* right = nullptr) :
-				key(key), val(val), left(left), right(right) { }
+				data(pair), left(left), right(right) { }
+
+			void set(Node<Key,Val>* node) {
+				this->data->first = node->data->first;
+				this->data->second = node->data->second;
+			}
 		};
 
 		Node<K, V>* root;
@@ -50,23 +54,68 @@ class AVLTree {
 			if (!curr)
 				return nullptr;
 
-			Node<K,V>* temp = new Node<K,V>(curr->key, curr->val, prev,
+			Node<K,V>* temp = new Node<K,V>(curr->data,
 				copy(curr->left, curr), copy(curr->right, curr));
 
 			return temp;
 		}
 
-		Node<K,V>* search_helper(Node<K,V>* curr, const K& key) {
+		Pair<Node<K,V>*, Node<K,V>*> search_helper(Node<K,V>* curr, Node<K,V>* prev, const K& key) {
 			if (!curr)
 				throw invalid_argument("key not found");
 
-			if (key == curr->key)
-				return curr;
-			else if (key < curr->key)
-				return search_helper(curr->left, key);
+			if (key == curr->data->first)
+				return make_Pair(curr, prev);
+			else if (key < curr->data->first)
+				return search_helper(curr->left, curr, key);
 			else
-				return search_helper(curr->right, key);
+				return search_helper(curr->right, curr, key);
 		}
+		void erase_helper(Node<K,V>* curr, Node<K,V>* prev) {
+			if (!curr)
+				return;
+
+			if (!curr->left && !curr->right) {
+				if (curr == root) {
+					delete root;
+					root = nullptr;
+				} else {
+					if (curr == prev->left)
+						prev->left = nullptr;
+					else
+						prev->right = nullptr;
+
+					delete curr;
+				}
+			} else {
+				if (curr->left && curr->right) {
+					Node<K,V>* temp = curr->right;
+					Node<K,V>* temp_prev = curr;
+
+					while (temp->left) {
+						temp_prev = temp;
+						temp = temp->left;
+					}
+
+					curr->set(temp);
+					erase_helper(temp, temp_prev);
+				} else {
+					Node<K,V>* temp;
+					if (curr->left)
+						temp = curr->left;
+					else
+						temp = curr->right;
+
+					if (curr == prev->left)
+						prev->left = temp;
+					else
+						prev->right = temp;
+
+					delete curr;
+				}
+			}
+		}
+
 		int height(Node<K,V>* curr) {
 			if (!curr)
 				return -1;
@@ -190,9 +239,8 @@ class AVLTree {
 					--*this;
 					return ptr;
 				}
-				K& operator*() { return ptr_->key; }
-				V* operator->() { return &ptr_->val; }
-				K& key() { return ptr_->key; }
+				Pair<K, V>& operator*() { return ptr_->data; }
+				Pair<K, V>& operator->() { return ptr_->data; }
 				bool operator==(const type& rhs) { return ptr_ == rhs.ptr_; }
 				bool operator!=(const type& rhs) { return ptr_ != rhs.ptr_; }
 				bool operator!() { return ptr_ != nullptr; }
@@ -230,10 +278,10 @@ class AVLTree {
 		~AVLTree() { clear(); }
 
 		V& at(const K& key) {
-			return search_helper(root, key)->val;
+			return search_helper(root, key)->first->data->second;
 		}
 		V& operator[](const K& key) {
-			return search_helper(root, key)->val;
+			return search_helper(root, key)->first->data->second;
 		}
 
 		bool empty() {
@@ -247,57 +295,59 @@ class AVLTree {
 			clear_helper(root);
 		}
 
-		void insert(const K& key, const V& val) {
+		Node<K, V>* balance(Node<K, V>* curr) {
+			Node<K, V>* parent = nullptr;
+			if (balance_factor(curr) == 2) {
+				if (balance_factor(curr->left) == 1) {
+					parent = left_left(curr);
+				} else if (balance_factor(curr->left) == -1) {
+					parent = left_right(curr);
+				}
+			} else if (balance_factor(curr) == -2) {
+				if (balance_factor(curr->right) == -1){
+					parent = right_right(curr);
+				} else if (balance_factor(curr->right) == 1) {
+					parent = right_left(curr);
+				}
+			}
+
+			return parent;
+		}
+
+		void insert(Pair<K, V> pair) {
 			if (!root) {
-				root = new Node<K, V>(key, val);
+				root = new Node<K, V>(pair);
 				return;
 			}
 			StackLinkedList<Node<K, V>*> visited;
 			Node<K, V>* curr = root;
 			while (curr) {
 				visited.push(curr);
-				if (curr->key > key) {
+				if (curr->data->first > pair->first) {
 					if (!curr->left) {
-						curr->left = new Node<K, V>(key, val);
+						curr->left = new Node<K, V>(pair);
 						break;
 					} else
 						curr = curr->left;
-				} else if (curr->key < key) {
+				} else if (curr->data->first < pair->first) {
 					if (!curr->right) {
-						curr->right = new Node<K, V>(key, val);
+						curr->right = new Node<K, V>(pair);
 						break;
 					} else
 						curr = curr->right;
-				} else if (curr->key == key) {
-					curr->val = val;
+				} else if (curr->data->first == pair->first) {
+					curr->data->second = pair->second;
 				}
 			}
 
 			// calculate balancing factor
 			while (!visited.empty()) {
-				bool has_balanced = false;
 				Node<K, V>* curr = visited.top();
-				Node<K, V>* parent;
-				if (balance_factor(curr) == 2) {
-					if (balance_factor(curr->left) == 1) {
-						parent = left_left(curr);
-					} else if (balance_factor(curr->left) == -1) {
-						parent = left_right(curr);
-					}
-					has_balanced = true;
-				} else if (balance_factor(curr) == -2) {
-					if (balance_factor(curr->right) == -1){
-						parent = right_right(curr);
-					} else if (balance_factor(curr->right) == 1) {
-						parent = right_left(curr);
-					}
-					has_balanced = true;
-				}
+				Node<K, V>* parent = balance(curr);
 
 				visited.pop();
-
 				// update parent pointer
-				if (has_balanced) {
+				if (parent) {
 					if (curr == root) {
 						root = parent;
 					} else {
@@ -307,8 +357,53 @@ class AVLTree {
 							visited.top()->right = parent;
 						}
 					}
+					break;
 				}
 			}
+		}
+
+		void erase(const K& key) {
+			auto pair = search_helper(root, nullptr, key);
+			erase_helper(pair->first, pair->second);
+
+			// rebalancing
+			bool has_balanced = false;
+			StackLinkedList<Node<K, V>*> visited;
+
+			do {
+				visited.push(root);
+				has_balanced = false;
+				while (!visited.empty()) {
+					Node<K, V>* curr = visited.top();
+					visited.pop();
+
+					if (curr->left) {
+						visited.push(curr->left);
+					}
+					if (curr->right) {
+						visited.push(curr->right);
+					}
+
+					Node<K, V>* parent = balance(curr);
+					if (parent) {
+						has_balanced = true;
+						auto pair = search_helper(root, nullptr, curr->data->first);
+
+						if (curr == root) {
+							root = parent;
+						} else {
+							if (pair->second->left == curr) {
+								pair->second->left = parent;
+							} else {
+								pair->second->right = parent;
+							}
+						}
+						break;
+					}
+				}
+
+				visited = StackLinkedList<Node<K, V>*>();
+			} while (has_balanced);
 		}
 
 		void print_helper(const string& pre, Node<K, V>* node, bool is_left) {
@@ -319,7 +414,7 @@ class AVLTree {
 			        cout << (is_left ? "├──" : "└──" );
 
 			        // print the value of the node
-			        cout << node->key << std::endl;
+			        cout << node->data->first << std::endl;
 
 			        // enter the next tree level - left and right branch
 			        print_helper( pre + (is_left ? "│   " : "    "), node->left, true);
